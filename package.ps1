@@ -1,5 +1,5 @@
 param(
-    [string]$BuildDir = "$PSScriptRoot/build-ninja-msvc",
+    [string]$BuildDir = "$PSScriptRoot/build/Desktop_Qt_6_11_1_MSVC2022_64bit_Release",
     [ValidateSet("Release", "RelWithDebInfo", "Debug")]
     [string]$Configuration = "RelWithDebInfo",
     [string]$OutputDir = "$PSScriptRoot/dist",
