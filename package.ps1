@@ -4,7 +4,6 @@ param(
     [string]$Configuration = "RelWithDebInfo",
     [string]$OutputDir = "$PSScriptRoot/dist",
     [string]$QtCreatorDir = "C:/Qt/Tools/qtcreator",
-    [switch]$SkipBuild,
     [switch]$AllowDebug
 )
 
@@ -17,13 +16,6 @@ $pluginInfo = Join-Path $QtCreatorDir "bin/qtplugininfo.exe"
 
 if (-not (Test-Path $buildPath -PathType Container)) {
     throw "Build directory does not exist: $buildPath"
-}
-
-if (-not $SkipBuild) {
-    & cmake --build $buildPath --config $Configuration
-    if ($LASTEXITCODE -ne 0) {
-        throw "Plugin build failed with exit code $LASTEXITCODE."
-    }
 }
 
 $candidates = @(
@@ -55,7 +47,17 @@ if ($metadata.debug -and -not $AllowDebug) {
 }
 
 $version = $metadata.MetaData.Version
-$architecture = [System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture.ToString().ToLowerInvariant()
+$nativeArchitecture = if ($env:PROCESSOR_ARCHITEW6432) {
+    $env:PROCESSOR_ARCHITEW6432
+} else {
+    $env:PROCESSOR_ARCHITECTURE
+}
+$architecture = switch ($nativeArchitecture.ToUpperInvariant()) {
+    "AMD64" { "x64" }
+    "ARM64" { "arm64" }
+    "X86" { "x86" }
+    default { $nativeArchitecture.ToLowerInvariant() }
+}
 $packageName = "DsComplete-$version-windows-$architecture.zip"
 $packagePath = Join-Path $outputPath $packageName
 $checksumPath = "$packagePath.sha256"
@@ -66,6 +68,7 @@ if (Test-Path $packagePath) {
 }
 
 Add-Type -AssemblyName System.IO.Compression
+Add-Type -AssemblyName System.IO.Compression.FileSystem
 $archive = [System.IO.Compression.ZipFile]::Open(
     $packagePath,
     [System.IO.Compression.ZipArchiveMode]::Create)

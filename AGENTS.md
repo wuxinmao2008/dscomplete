@@ -39,7 +39,7 @@ Keep responsibilities separated:
 - `dscompleteclient.*`: editor lifecycle, debounce, network requests, cancellation, stale-response checks, and suggestion insertion.
 - `dscompleteprotocol.*`: context extraction, endpoint normalization, payload generation, endpoint validation, and response parsing.
 - `tst_dscompleteprotocol.cpp`: protocol-level unit tests.
-- `package.ps1`: release build verification and single-library ZIP packaging.
+- `package.ps1`: existing binary verification and single-library ZIP packaging.
 
 Keep protocol helpers independent from editor and network objects so they remain easy to test.
 
@@ -109,7 +109,7 @@ Before completing a change:
 5. Confirm Git changes remain inside `src/plugins/dscomplete/`.
 6. Confirm API keys and source context are absent from logs and committed fixtures.
 
-For release packaging, run `./package.ps1`. The script must continue to reject Debug binaries by default, verify embedded metadata with `qtplugininfo`, keep `DsComplete.dll` at the ZIP root, and emit a SHA-256 checksum.
+For release packaging, run `./package.ps1` after building. The script must not invoke a build, and must continue to reject Debug binaries by default, verify embedded metadata with `qtplugininfo`, keep `DsComplete.dll` at the ZIP root, and emit a SHA-256 checksum.
 
 ## Documentation
 

@@ -99,25 +99,21 @@ build-ninja-msvc/lib/qtcreator/plugins/DsComplete.dll
 ./package.ps1
 ```
 
-脚本默认执行以下操作：
+脚本执行以下操作：
 
-1. 以 `RelWithDebInfo` 配置编译 `build-ninja-msvc`。
+1. 查找构建目录中已有的 `DsComplete.dll`。
 2. 使用 `qtplugininfo` 验证插件 ID、版本和构建类型。
 3. 拒绝打包 Debug DLL。
 4. 生成只包含根目录 `DsComplete.dll` 的安装 ZIP。
 5. 生成对应的 SHA-256 校验文件。
+
+脚本不会执行编译。运行前应先在 Qt Creator 或命令行中完成 Release/RelWithDebInfo 构建。
 
 默认产物位于：
 
 ```text
 dist/DsComplete-<version>-windows-<architecture>.zip
 dist/DsComplete-<version>-windows-<architecture>.zip.sha256
-```
-
-如果已经完成编译，可以跳过构建：
-
-```powershell
-./package.ps1 -SkipBuild
 ```
 
 使用其他构建目录或 Qt Creator 安装目录：
