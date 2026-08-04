@@ -25,5 +25,8 @@ QJsonObject buildFimPayload(const QString &model,
 QUrl completionUrl(const QString &baseUrl);
 bool isAllowedEndpoint(const QUrl &url);
 QStringList parseCompletionResponse(const QByteArray &data, QString *errorMessage = nullptr);
+QString completionSuggestionText(const QString &linePrefix,
+                                 const QString &lineSuffix,
+                                 const QString &completion);
 
 } // namespace DsComplete::Internal

@@ -251,14 +251,22 @@ void DsCompleteClient::handleReply(TextEditorWidget *editor,
     QList<TextSuggestion::Data> suggestions;
     const QTextCursor cursor = editor->textCursor();
     const Text::Position position{cursor.blockNumber() + 1, cursor.positionInBlock()};
-    const Text::Range range{position, position};
+    const Text::Position lineStart{cursor.blockNumber() + 1, 0};
+    const Text::Range range{lineStart, position};
+    const QString line = cursor.block().text();
+    const QString linePrefix = line.left(cursor.positionInBlock());
+    const QString lineSuffix = line.mid(cursor.positionInBlock());
     for (QString completion : completions) {
-        if (!completion.contains('\n')) {
+        if (lineSuffix.isEmpty() && !completion.contains('\n')) {
             while (!completion.isEmpty() && completion.back().isSpace())
                 completion.chop(1);
         }
-        if (!completion.trimmed().isEmpty())
-            suggestions.append({range, position, completion});
+        if (!completion.trimmed().isEmpty()) {
+            suggestions.append(
+                {range,
+                 position,
+                 completionSuggestionText(linePrefix, lineSuffix, completion)});
+        }
     }
     if (!suggestions.isEmpty() && !editor->suggestionVisible()) {
         editor->insertSuggestion(

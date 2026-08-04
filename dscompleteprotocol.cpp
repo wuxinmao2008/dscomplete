@@ -88,4 +88,39 @@ QStringList parseCompletionResponse(const QByteArray &data, QString *errorMessag
     return completions;
 }
 
+QString completionSuggestionText(const QString &linePrefix,
+                                 const QString &lineSuffix,
+                                 const QString &completion)
+{
+    QString text;
+    if (completion.startsWith(linePrefix)) {
+        text = completion;
+    } else {
+        qsizetype indentationLength = 0;
+        while (indentationLength < linePrefix.size()
+               && linePrefix.at(indentationLength).isSpace()
+               && linePrefix.at(indentationLength) != '\n'
+               && linePrefix.at(indentationLength) != '\r') {
+            ++indentationLength;
+        }
+        const QString prefixWithoutIndentation = linePrefix.mid(indentationLength);
+        if (!prefixWithoutIndentation.isEmpty() && completion.startsWith(prefixWithoutIndentation))
+            text = linePrefix.left(indentationLength) + completion;
+        else
+            text = linePrefix + completion;
+    }
+
+    qsizetype overlapLength = qMin(text.size(), lineSuffix.size());
+    while (overlapLength > 0
+           && text.right(overlapLength) != lineSuffix.left(overlapLength)) {
+        --overlapLength;
+    }
+    if (overlapLength == 1
+        && text.back().isLetterOrNumber()
+        && lineSuffix.front().isLetterOrNumber()) {
+        overlapLength = 0;
+    }
+    return text + lineSuffix.mid(overlapLength);
+}
+
 } // namespace DsComplete::Internal
