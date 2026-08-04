@@ -1,0 +1,15 @@
+{
+    "Id" : "dscomplete",
+    "DisplayName" : "DeepSeek Completion",
+    "Name" : "DsComplete",
+    "Version" : "${IDE_VERSION}",
+    "CompatVersion" : "${IDE_VERSION_COMPAT}",
+    "DisabledByDefault" : true,
+    "Experimental" : true,
+    "VendorId" : "community",
+    "Vendor" : "Community",
+    "Copyright" : "Copyright (C) 2026",
+    "License" : [ "GNU General Public License version 3 with Qt GPL exception" ],
+    "Description" : "Provides DeepSeek fill-in-the-middle suggestions in the text editor.",
+    ${IDE_PLUGIN_DEPENDENCIES}
+}
