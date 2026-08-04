@@ -32,6 +32,7 @@ DsComplete 是一个独立构建的 Qt Creator 插件，通过 DeepSeek Fill-in-
 | `dscompleteprotocol.cpp` | FIM URL、payload、上下文和响应解析 |
 | `dscompletesettings.cpp` | 全局设置和 API Key 凭据存储 |
 | `tst_dscompleteprotocol.cpp` | 协议层单元测试 |
+| `package.ps1` | 验证并生成插件 ZIP 和 SHA-256 校验文件 |
 | `CMakeLists.txt` | 独立 CMake 构建入口 |
 | `dscomplete.qbs` | 与 CMake 同步的 qbs 描述 |
 
@@ -89,6 +90,46 @@ ctest --test-dir build-ninja-msvc --output-on-failure -C RelWithDebInfo
 ```text
 build-ninja-msvc/lib/qtcreator/plugins/DsComplete.dll
 ```
+
+## 自动打包
+
+在 MSVC Developer PowerShell 中运行：
+
+```powershell
+./package.ps1
+```
+
+脚本默认执行以下操作：
+
+1. 以 `RelWithDebInfo` 配置编译 `build-ninja-msvc`。
+2. 使用 `qtplugininfo` 验证插件 ID、版本和构建类型。
+3. 拒绝打包 Debug DLL。
+4. 生成只包含根目录 `DsComplete.dll` 的安装 ZIP。
+5. 生成对应的 SHA-256 校验文件。
+
+默认产物位于：
+
+```text
+dist/DsComplete-<version>-windows-<architecture>.zip
+dist/DsComplete-<version>-windows-<architecture>.zip.sha256
+```
+
+如果已经完成编译，可以跳过构建：
+
+```powershell
+./package.ps1 -SkipBuild
+```
+
+使用其他构建目录或 Qt Creator 安装目录：
+
+```powershell
+./package.ps1 `
+    -BuildDir "D:/path/to/build" `
+    -QtCreatorDir "C:/Qt/Tools/qtcreator" `
+    -Configuration Release
+```
+
+只有在明确需要测试 Debug 插件时才使用 `-AllowDebug`。
 
 ## 运行未安装插件
 
