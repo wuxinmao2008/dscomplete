@@ -24,6 +24,17 @@ endif()
 find_package(Qt6 REQUIRED COMPONENTS Network Widgets)
 find_package(QtCreator REQUIRED COMPONENTS Core TextEditor)
 
+set(DSCOMPLETE_PLUGIN_VERSION "20.0.0" CACHE STRING "DsComplete plugin version")
+set(DSCOMPLETE_PLUGIN_COMPAT_VERSION "20.0.0"
+  CACHE STRING "Minimum compatible Qt Creator plugin version")
+set(DSCOMPLETE_DEPENDENCY_VERSION "20.0.0"
+  CACHE STRING "Required Core and TextEditor plugin version")
+
+set_property(TARGET QtCreator::Core PROPERTY QTC_PLUGIN_VERSION
+       "${DSCOMPLETE_DEPENDENCY_VERSION}")
+set_property(TARGET QtCreator::TextEditor PROPERTY QTC_PLUGIN_VERSION
+       "${DSCOMPLETE_DEPENDENCY_VERSION}")
+
 option(WITH_TESTS "Build DsComplete tests" OFF)
 
 if(WITH_TESTS)
@@ -33,6 +44,8 @@ if(WITH_TESTS)
 endif()
 
 add_qtc_plugin(DsComplete
+  VERSION "${DSCOMPLETE_PLUGIN_VERSION}"
+  COMPAT_VERSION "${DSCOMPLETE_PLUGIN_COMPAT_VERSION}"
   PLUGIN_DEPENDS
     QtCreator::Core
     QtCreator::TextEditor
